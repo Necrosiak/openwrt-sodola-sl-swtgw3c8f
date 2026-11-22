@@ -10,7 +10,7 @@ for base in [a.tree/'config/files',a.tree/'package']+([a.build/'files',a.build/'
  for f in base.rglob('*'):
   if f.is_symlink() or not f.is_file():continue
   rel=f.relative_to(base).as_posix();d=f.read_bytes()
-  if re.search(r'(^|/)(authorized_keys|known_hosts|dropbear_[^/]*_host_key|id_rsa|id_ed25519|uhttpd\.key)$',rel):problems.append(rel+': instance credential')
+  if re.search(r'(^|/)(authorized_keys|known_hosts|dropbear_[^/]*_host_key|id_rsa|id_ed25519|uhttpd\.(?:key|crt)(?:\.[^/]*)?|tailscaled\.state|nekyron-https\.state)$',rel):problems.append(rel+': instance credential')
   if f.suffix in ('.pcap','.pcapng'):problems.append(rel+': packet capture')
   if re.search(rb'-----BEGIN (?:[A-Z0-9 ]+ )?PRIVATE KEY-----[\r\n]+[A-Za-z0-9+/=\r\n]{64,}-----END ',d):problems.append(rel+': private key')
   if f.name=='shadow':

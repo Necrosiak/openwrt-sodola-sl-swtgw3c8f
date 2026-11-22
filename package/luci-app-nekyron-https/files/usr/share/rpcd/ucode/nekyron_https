@@ -1,0 +1,30 @@
+// SPDX-License-Identifier: Apache-2.0
+'use strict';
+import { readfile, popen } from 'fs';
+import { cursor } from 'uci';
+function run(args) {
+ const cmd = join(' ', map(args, (s) => "'" + replace('' + s, /'/g, "'\\''") + "'"));
+ const p = popen(cmd + ' 2>/dev/null');
+ if (!p) return { code: 1, text: '' };
+ const data = p.read('all'); const code = p.close();
+ return { code: code, text: data ?? '' };
+}
+function status() {
+ const state = split(readfile('/etc/nekyron-https.state') ?? '', '\n');
+ const cert = run(['/bin/busybox', 'base64', '/etc/uhttpd.crt']);
+ const digest = run(['/bin/busybox', 'sha256sum', '/etc/uhttpd.crt']);
+ const now = +run(['/bin/date', '+%s']).text;
+ return { managed: cursor().get('nekyron-https', 'main', 'managed') == '1',
+  clock_ready: now >= 1704067200, issued: +(state[0] ?? '0'), names: state[1] ?? '',
+  certificate: cert.code == 0 ? replace(cert.text, /\s/g, '') : '',
+  fingerprint: digest.code == 0 ? split(digest.text, ' ')[0] : '' };
+}
+return { nekyron_https: {
+ status: { call: function() { return status(); } },
+ update: { call: function() {
+  const s = status();
+  if (!s.managed || !s.clock_ready) return { ok: false, blocked: true };
+  const r = run(['/usr/libexec/nekyron-https', '--force']);
+  return { ok: r.code == 0 };
+ } }
+} };

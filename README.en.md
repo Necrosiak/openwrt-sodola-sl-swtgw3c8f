@@ -18,7 +18,7 @@ Test initramfs in RAM before flashing and keep your own verified stock backups. 
 
 ## Updates and languages
 
-GitHub Actions prepares an upstream candidate daily and can run pinned builds manually. Patch conflicts fail the build. There is **no automatic flashing or stable release promotion**, and no guarantee that every CVE is fixed. Review Actions results and validate hardware before installing candidates.
+GitHub Actions checks upstream every hour and builds a candidate when source commits change and can run pinned builds manually. Patch conflicts fail the build. There is **no automatic flashing or stable release promotion**, and no guarantee that every CVE is fixed. Review Actions results and validate hardware before installing candidates.
 
 English is the source language; French is embedded. The release provides 42 LuCI language packs as separate APKs so users can install their own language without consuming flash for all translations. Functional theme labels use native LuCI catalogs; upstream translation completeness varies.
 
@@ -33,3 +33,5 @@ python3 scripts/collect.py build artifacts
 ```
 
 The source lock, patches, package sources and corresponding-source release bundle allow reconstruction. Builds are not claimed to be byte-identical. [Licenses and upstream attribution](docs/LICENSES.md).
+
+[HTTPS certificates](docs/HTTPS.md)

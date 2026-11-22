@@ -1,0 +1,51 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "HTTPS Certificate"
+msgstr "Certificato HTTPS"
+
+msgid "Download public certificate"
+msgstr "Scarica certificato pubblico"
+
+msgid "Update certificate"
+msgstr "Aggiorna certificato"
+
+msgid "This generates a new certificate for this switch. HTTPS will restart briefly. Import the new public certificate into your browser afterwards."
+msgstr "Genera un nuovo certificato per questo switch. HTTPS si riavvierà brevemente. Importa poi il nuovo certificato pubblico nel browser."
+
+msgid "Certificate updated. Reload this page and trust the new certificate."
+msgstr "Certificato aggiornato. Ricarica la pagina e importa il nuovo certificato attendibile."
+
+msgid "Certificate update unavailable. Check the clock and HTTPS configuration."
+msgstr "Aggiornamento non disponibile. Controlla ora e configurazione HTTPS."
+
+msgid "After firmware installation, a unique certificate is generated automatically once the device clock and its DHCP address are available. No private key is shared between switches."
+msgstr "Dopo l’installazione del firmware viene generato un certificato unico quando ora e indirizzo DHCP sono disponibili. Nessuna chiave privata è condivisa tra switch."
+
+msgid "Automatic generation"
+msgstr "Generazione automatica"
+
+msgid "System clock"
+msgstr "Orologio di sistema"
+
+msgid "Ready"
+msgstr "Pronto"
+
+msgid "Waiting for time synchronization"
+msgstr "In attesa di sincronizzazione oraria"
+
+msgid "Generated"
+msgstr "Generato il"
+
+msgid "Waiting for automatic generation"
+msgstr "In attesa di generazione automatica"
+
+msgid "Certificate names"
+msgstr "Nomi del certificato"
+
+msgid "SHA-256 fingerprint"
+msgstr "Impronta SHA-256"
+
+msgid "The certificate encrypts access to this switch. Each administration computer must trust its public certificate to remove browser warnings. A new IP address or certificate renewal can require importing it again."
+msgstr "Il certificato cifra l’accesso. Ogni computer di amministrazione deve riconoscere il certificato pubblico. Una nuova IP o il rinnovo può richiedere una nuova importazione."

@@ -1,0 +1,8 @@
+#!/bin/sh
+# ntpd calls these events after synchronizing/adjusting the system clock.
+case "$ACTION" in unsync) rm -f /var/run/nekyron-time-synced; exit 0;; stratum|step|periodic) ;; *) exit 0;; esac
+[ "$(date +%s)" -ge 1704067200 ] || exit 0
+[ "$ACTION" = step ] || [ "${stratum:-16}" -lt 16 ] 2>/dev/null || exit 0
+mkdir -p /var/run
+touch /var/run/nekyron-time-synced
+/usr/libexec/nekyron-https || true

@@ -1,0 +1,19 @@
+{
+  "nekyron-https": {
+    "description": "Manage this device HTTPS certificate; never exports private keys",
+    "read": {
+      "ubus": {
+        "nekyron_https": [
+          "status"
+        ]
+      }
+    },
+    "write": {
+      "ubus": {
+        "nekyron_https": [
+          "update"
+        ]
+      }
+    }
+  }
+}

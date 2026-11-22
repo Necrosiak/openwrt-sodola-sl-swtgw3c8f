@@ -1,0 +1,51 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "HTTPS Certificate"
+msgstr "Certificado HTTPS"
+
+msgid "Download public certificate"
+msgstr "Baixar certificado público"
+
+msgid "Update certificate"
+msgstr "Atualizar certificado"
+
+msgid "This generates a new certificate for this switch. HTTPS will restart briefly. Import the new public certificate into your browser afterwards."
+msgstr "Gera um novo certificado para este switch. HTTPS reiniciará brevemente. Depois importe o novo certificado público no navegador."
+
+msgid "Certificate updated. Reload this page and trust the new certificate."
+msgstr "Certificado atualizado. Recarregue a página e importe o novo certificado de confiança."
+
+msgid "Certificate update unavailable. Check the clock and HTTPS configuration."
+msgstr "Atualização indisponível. Verifique a hora e a configuração HTTPS."
+
+msgid "After firmware installation, a unique certificate is generated automatically once the device clock and its DHCP address are available. No private key is shared between switches."
+msgstr "Após instalar o firmware, um certificado exclusivo é gerado quando a hora e o endereço DHCP estão disponíveis. Nenhuma chave privada é compartilhada entre switches."
+
+msgid "Automatic generation"
+msgstr "Geração automática"
+
+msgid "System clock"
+msgstr "Relógio do sistema"
+
+msgid "Ready"
+msgstr "Pronto"
+
+msgid "Waiting for time synchronization"
+msgstr "Aguardando sincronização de hora"
+
+msgid "Generated"
+msgstr "Gerado em"
+
+msgid "Waiting for automatic generation"
+msgstr "Aguardando geração automática"
+
+msgid "Certificate names"
+msgstr "Nomes do certificado"
+
+msgid "SHA-256 fingerprint"
+msgstr "Impressão digital SHA-256"
+
+msgid "The certificate encrypts access to this switch. Each administration computer must trust its public certificate to remove browser warnings. A new IP address or certificate renewal can require importing it again."
+msgstr "O certificado cifra o acesso. Cada computador de administração deve confiar no certificado público. Uma mudança de IP ou renovação pode exigir nova importação."

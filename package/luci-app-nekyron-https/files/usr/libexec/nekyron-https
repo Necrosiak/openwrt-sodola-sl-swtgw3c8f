@@ -1,0 +1,56 @@
+#!/bin/sh
+# SPDX-License-Identifier: Apache-2.0
+# Per-device certificate; no certificate or key is shipped in the image.
+set -eu
+[ "$(uci -q get nekyron-https.main.managed)" = 1 ] || exit 3
+now=$(date +%s)
+# Never mint an already-expired certificate before the clock is usable.
+[ "$now" -ge 1704067200 ] || exit 2
+# Auto-generation waits for ntpd at every boot; manual renewal permits a valid manually set clock.
+[ "${1:-}" = --force ] || [ -f /var/run/nekyron-time-synced ] || exit 2
+[ "$(uci -q get uhttpd.main.cert)" = /etc/uhttpd.crt ] || exit 3
+[ "$(uci -q get uhttpd.main.key)" = /etc/uhttpd.key ] || exit 3
+host=$(uci -q get system.@system[0].hostname)
+case "$host" in ''|*[!a-zA-Z0-9.-]*) host=switch-sodola;; esac
+san="DNS:$host,DNS:$host.home.arpa"
+ips=$(ubus call network.interface.lan status | jsonfilter -e '@["ipv4-address"][*].address')
+for ip in $ips; do
+ case "$ip" in *[!0-9.]*|'') continue;; esac
+ san="$san,IP:$ip"
+done
+[ -n "$ips" ] || exit 4
+state=/etc/nekyron-https.state
+issued=0
+previous=''
+if [ -s "$state" ]; then
+ { read -r issued; read -r previous; } < "$state"
+fi
+case "$issued" in ''|*[!0-9]*) issued=0;; esac
+if [ "${1:-}" != --force ] && [ "$previous" = "$san" ] && [ "$issued" -le "$now" ] && [ $((now-issued)) -lt 28512000 ] && [ -s /etc/uhttpd.crt ] && [ -s /etc/uhttpd.key ]; then
+ exit 0
+fi
+mkdir -p /var/lock
+mkdir /var/lock/nekyron-https 2>/dev/null || exit 0
+umask 077
+key=/etc/uhttpd.key.new.$$
+crt=/etc/uhttpd.crt.new.$$
+trap 'rm -f "$key" "$crt"; rmdir /var/lock/nekyron-https 2>/dev/null || true' EXIT HUP INT TERM
+# px5g requires one SAN entry per -addext argument.
+set -- -addext "subjectAltName=DNS:$host" -addext "subjectAltName=DNS:$host.home.arpa"
+for ip in $ips; do
+ case "$ip" in *[!0-9.]*|'') continue;; esac
+ set -- "$@" -addext "subjectAltName=IP:$ip"
+done
+/usr/sbin/px5g selfsigned -der -days 365 -newkey ec -pkeyopt ec_paramgen_curve:P-256 \
+ -keyout "$key" -out "$crt" -subj "/CN=$host/O=Nekyron Network Control" \
+ -addext extendedKeyUsage=serverAuth "$@" >/dev/null 2>&1
+[ -s "$key" ] && [ -s "$crt" ]
+# Keep the previous pair for recovery; restricted and never exported by the UI.
+[ ! -f /etc/uhttpd.key ] || cp -p /etc/uhttpd.key /etc/uhttpd.key.previous
+[ ! -f /etc/uhttpd.crt ] || cp -p /etc/uhttpd.crt /etc/uhttpd.crt.previous
+mv "$key" /etc/uhttpd.key
+mv "$crt" /etc/uhttpd.crt
+chmod 600 /etc/uhttpd.key /etc/uhttpd.crt
+printf '%s\n%s\n' "$now" "$san" > "$state"
+# Let the LuCI update RPC return before replacing its HTTPS connection.
+(sleep 2; /etc/init.d/uhttpd restart) >/dev/null 2>&1 &

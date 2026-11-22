@@ -1,0 +1,51 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "HTTPS Certificate"
+msgstr "Certificat HTTPS"
+
+msgid "Download public certificate"
+msgstr "Télécharger le certificat public"
+
+msgid "Update certificate"
+msgstr "Mettre à jour le certificat"
+
+msgid "This generates a new certificate for this switch. HTTPS will restart briefly. Import the new public certificate into your browser afterwards."
+msgstr "Un nouveau certificat sera généré pour ce switch. HTTPS redémarrera brièvement. Il faudra ensuite importer le nouveau certificat public dans ton navigateur."
+
+msgid "Certificate updated. Reload this page and trust the new certificate."
+msgstr "Certificat mis à jour. Recharge la page et ajoute le nouveau certificat à ceux de confiance."
+
+msgid "Certificate update unavailable. Check the clock and HTTPS configuration."
+msgstr "Mise à jour indisponible. Vérifie l’heure et la configuration HTTPS."
+
+msgid "After firmware installation, a unique certificate is generated automatically once the device clock and its DHCP address are available. No private key is shared between switches."
+msgstr "Après installation du firmware, un certificat unique est généré automatiquement dès que l’heure du switch et son adresse DHCP sont disponibles. Aucune clé privée n’est partagée entre les switches."
+
+msgid "Automatic generation"
+msgstr "Génération automatique"
+
+msgid "System clock"
+msgstr "Horloge du système"
+
+msgid "Ready"
+msgstr "Prête"
+
+msgid "Waiting for time synchronization"
+msgstr "En attente de synchronisation de l’heure"
+
+msgid "Generated"
+msgstr "Généré le"
+
+msgid "Waiting for automatic generation"
+msgstr "En attente de génération automatique"
+
+msgid "Certificate names"
+msgstr "Noms et adresses du certificat"
+
+msgid "SHA-256 fingerprint"
+msgstr "Empreinte SHA-256"
+
+msgid "The certificate encrypts access to this switch. Each administration computer must trust its public certificate to remove browser warnings. A new IP address or certificate renewal can require importing it again."
+msgstr "Le certificat chiffre l’accès à ce switch. Chaque ordinateur d’administration doit reconnaître son certificat public pour supprimer les alertes du navigateur. Un changement d’adresse IP ou un renouvellement peut nécessiter de le réimporter."

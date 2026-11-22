@@ -22,6 +22,8 @@ Firmware comunitário experimental para **SODOLA SL-SWTGW3C8F / RTL9303 / 8 × S
 
 Root começa bloqueado. É necessária uma consola série compatível para definir uma palavra-passe própria com `passwd`. Não são incluídas credenciais partilhadas, chaves privadas ou cópias de segurança de dispositivos.
 
-O GitHub Actions gera diariamente candidatos não testados a partir das fontes atualizadas. **Não instala firmware automaticamente**, não promove versões validadas e não garante corrigir todas as CVE.
+O GitHub Actions verifica as fontes a cada hora e gera candidatos não testados quando mudam. **Não instala firmware automaticamente**, não promove versões validadas e não garante corrigir todas as CVE.
 
 Home Assistant: são fornecidas instruções e uma ACL opcional apenas de leitura. A administração completa de portas/VLAN não está validada e pode exigir ações personalizadas.
+
+[Certificados HTTPS](docs/HTTPS.md)

@@ -16,7 +16,7 @@ Firmware communautaire expérimental pour **SODOLA SL-SWTGW3C8F, RTL9303, 8 × S
 - LuCI HTTPS, thème **Nekyron** noir/vert : SVG locaux, fond Matrix, illustration et huit ports reflétant les données natives de LuCI. Argon et Bootstrap restent disponibles.
 - `adblock-fast` avec interface LuCI, **désactivé**. `tcpdump-mini`, iperf3, ethtool, LLDP, SNMP, SQM et pilotes présents selon le manifeste. Les services optionnels restent désactivés au premier démarrage.
 - Traductions LuCI distribuées en paquets séparés pour les langues disponibles ; les textes fonctionnels du thème réutilisent les catalogues natifs.
-- Recettes de construction et construction GitHub Actions périodique de candidats amont, **sans flash automatique**.
+- Recettes de construction et vérification horaire des sources par GitHub Actions et compilation de candidats en cas de changement, **sans flash automatique**.
 
 ## État de validation
 
@@ -45,3 +45,5 @@ python3 scripts/collect.py build artifacts
 ## Licences
 
 OpenWrt et ses composants conservent leurs licences respectives. Le profil de carte et les correctifs noyau suivent GPL-2.0-or-later ; les templates Argon et adaptations du thème sont sous Apache-2.0, avec les attributions amont conservées. Adblock-fast suit AGPL-3.0-or-later. Voir [licences et sources](docs/LICENSES.md).
+
+[Certificats HTTPS](docs/HTTPS.md)

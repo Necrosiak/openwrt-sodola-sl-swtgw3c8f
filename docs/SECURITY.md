@@ -2,7 +2,7 @@
 
 ## Mises à jour automatiques : ce qui est automatisé
 
-Le workflow GitHub Actions s'exécute quotidiennement à 03:30 UTC et peut être lancé manuellement. Les exécutions planifiées suivent les sources amont actuelles d'OpenWrt et des feeds, réappliquent les correctifs SODOLA et construisent des candidats. Les références réellement utilisées sont enregistrées dans `resolved-sources.json`.
+Le workflow GitHub Actions vérifie les sources chaque heure (minute 17 UTC) et peut être lancé manuellement. Une empreinte compare les commits amont et la recette au dernier candidat compilé avec succès : sans changement, la compilation est sautée ; après échec, une nouvelle tentative reste possible. Les quatre références sont figées avant la compilation pour construire exactement les changements détectés. GitHub peut retarder une exécution ; ce n’est pas une réception instantanée de chaque avis de sécurité. Les exécutions planifiées suivent les sources amont actuelles d'OpenWrt et des feeds, réappliquent les correctifs SODOLA et construisent des candidats. Les références réellement utilisées sont enregistrées dans `resolved-sources.json`.
 
 - Pas de connexion à votre switch depuis GitHub.
 - Pas de mot de passe, clé SSH ou adresse de réseau privé dans les secrets du workflow.

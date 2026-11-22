@@ -1,0 +1,35 @@
+# HTTPS / TLS certificates
+
+## English
+
+After installing or upgrading this firmware, the switch waits for NTP time synchronization and its LAN DHCP address, then generates its own EC P-256 certificate and private key. It never ships a shared key. The certificate covers its hostname, `<hostname>.home.arpa` and current LAN IPv4 address, is valid for 365 days, and is renewed after 330 days or an address/name change. NTP and LAN events check the certificate; they do not regenerate it on every boot. The private key remains on the device. The previous pair is retained locally for recovery.
+
+Open **System → HTTPS Certificate** to view its names, generation date and SHA-256 fingerprint, download the public certificate, or choose **Update certificate**. Automatic generation waits for NTP; manual renewal also accepts a correctly set clock. Renewing restarts HTTPS briefly. If DHCP or NTP is unavailable, generation stays pending and the existing certificate remains in place. On old releases the initial certificate may appear expired because it was generated before the clock was set. Rebooting does not repair that certificate by itself.
+
+A self-signed certificate is not automatically trusted by browsers. After independently verifying the fingerprint (for example over SSH with a previously verified host key), import the public certificate on each administration computer. On Linux Chromium/Opera: `python3 scripts/trust-switch-certificate.py /path/to/switch-https.crt --host <switch-ip>`. This pins only that server certificate, not a general-purpose CA. Restart the browser if necessary. Other browsers/computers may use a separate certificate store. Renewing/changing the certificate requires trusting the new one. Never disable certificate verification or trust a certificate merely because a network page offers it.
+
+For an externally issued certificate, disable automatic management first: `uci set nekyron-https.main.managed=0; uci commit nekyron-https`. Then configure uHTTPd with your certificate/key. Private keys and runtime state must never be committed or included in public firmware. HTTPS repairs are included in v0.1.1 and later; existing v0.1.0 binary downloads do not change automatically.
+
+## Français
+
+Après installation ou mise à jour du firmware, le switch attend la synchronisation NTP et son adresse DHCP, puis génère son certificat EC P-256 et sa clé privée, uniques. Le certificat couvre son nom, `<nom>.home.arpa` et son IPv4 locale. Validité : 365 jours ; renouvellement après 330 jours ou changement de nom/adresse. Les événements NTP/réseau vérifient le certificat sans le recréer à chaque démarrage. La clé reste sur le switch ; la paire précédente est conservée localement pour récupération.
+
+Dans **Système → Certificat HTTPS**, consulte les adresses, la date et l’empreinte, télécharge le certificat public ou utilise **Mettre à jour le certificat**. La génération automatique attend NTP ; le bouton manuel accepte aussi une horloge réglée correctement. HTTPS redémarre brièvement lors du renouvellement. Sans NTP/DHCP, la génération reste en attente. L’ancien firmware pouvait générer un certificat expiré avant la mise à l’heure : un simple redémarrage ne le corrige pas.
+
+Chaque poste doit reconnaître le certificat public après vérification indépendante de son empreinte, par exemple via SSH déjà authentifié. Pour Chromium/Opera sous Linux : `python3 scripts/trust-switch-certificate.py /chemin/switch-https.crt --host <ip-du-switch>`. Redémarre le navigateur si nécessaire. Les autres navigateurs/postes peuvent avoir leur propre magasin. Après renouvellement, réimporte le certificat. N’importe quelle page réseau ne constitue pas une preuve de confiance. Pour un certificat externe, désactive d’abord la gestion automatique avec `uci set nekyron-https.main.managed=0; uci commit nekyron-https`. Aucune clé privée ne doit être publiée. Correctif présent à partir de v0.1.1 ; les binaires v0.1.0 restent inchangés.
+
+## Deutsch
+
+Nach Installation/Update wartet der Switch auf NTP-Zeitsynchronisierung und seine DHCP-Adresse und erstellt dann ein eigenes EC-P-256-Zertifikat mit privatem Schlüssel. Keine gemeinsamen Schlüssel im Image. Gültig für 365 Tage; Erneuerung nach 330 Tagen oder bei geändertem Namen/Adresse. Unter **System → HTTPS Certificate** stehen Status, Fingerabdruck, Download des öffentlichen Zertifikats und manuelle Erneuerung bereit. Ohne gültige Zeit/DHCP bleibt die Erstellung ausstehend. Jeder Verwaltungsrechner muss das unabhängig geprüfte öffentliche Zertifikat vertrauen; Linux Chromium/Opera: `python3 scripts/trust-switch-certificate.py /pfad/switch-https.crt --host <switch-ip>`. Nach Erneuerung erneut importieren. Für externe Zertifikate zuerst `nekyron-https.main.managed=0` setzen und speichern. Ab v0.1.1; alte v0.1.0-Binärdateien bleiben unverändert.
+
+## Español
+
+Tras instalar/actualizar el firmware, el switch espera la sincronización NTP y su dirección DHCP y genera un certificado EC P-256 y una clave únicos. Validez de 365 días; renovación tras 330 días o un cambio de nombre/dirección. **Sistema → HTTPS Certificate** permite consultar, descargar el certificado público y renovarlo. Sin hora válida/DHCP queda pendiente. Cada equipo administrador debe confiar en el certificado público después de verificar su huella por un canal independiente; Chromium/Opera en Linux: `python3 scripts/trust-switch-certificate.py /ruta/switch-https.crt --host <ip-switch>`. Importar de nuevo tras renovar. Para certificados externos, desactivar y guardar primero `nekyron-https.main.managed=0`. Incluido desde v0.1.1; los binarios v0.1.0 no se modifican.
+
+## Italiano
+
+Dopo l’installazione/aggiornamento, lo switch attende NTP e l’indirizzo DHCP, poi genera certificato EC P-256 e chiave unici. Validità 365 giorni; rinnovo dopo 330 giorni o cambio di nome/indirizzo. **Sistema → HTTPS Certificate** mostra stato e impronta e permette download del certificato pubblico e rinnovo manuale. Senza ora valida/DHCP resta in attesa. Ogni computer deve riconoscere il certificato pubblico dopo verifica indipendente dell’impronta; Chromium/Opera Linux: `python3 scripts/trust-switch-certificate.py /percorso/switch-https.crt --host <ip-switch>`. Reimportare dopo il rinnovo. Per certificati esterni disattivare e salvare prima `nekyron-https.main.managed=0`. Incluso da v0.1.1; binari v0.1.0 invariati.
+
+## Português
+
+Após instalar/atualizar, o switch aguarda NTP e o endereço DHCP e gera certificado EC P-256 e chave exclusivos. Validade de 365 dias; renovação após 330 dias ou mudança de nome/endereço. **Sistema → HTTPS Certificate** mostra estado e impressão digital e permite baixar o certificado público e renovar manualmente. Sem hora válida/DHCP fica pendente. Cada computador precisa confiar no certificado público após verificação independente da impressão digital; Chromium/Opera Linux: `python3 scripts/trust-switch-certificate.py /caminho/switch-https.crt --host <ip-switch>`. Reimportar após renovar. Para certificados externos, desativar e guardar primeiro `nekyron-https.main.managed=0`. Incluído desde v0.1.1; binários v0.1.0 inalterados.

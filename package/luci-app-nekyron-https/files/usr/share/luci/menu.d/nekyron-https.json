@@ -1,0 +1,15 @@
+{
+  "admin/system/nekyron-https": {
+    "title": "HTTPS Certificate",
+    "order": 65,
+    "action": {
+      "type": "view",
+      "path": "nekyron/https"
+    },
+    "depends": {
+      "acl": [
+        "nekyron-https"
+      ]
+    }
+  }
+}

@@ -1,0 +1,51 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "HTTPS Certificate"
+msgstr "HTTPS-Zertifikat"
+
+msgid "Download public certificate"
+msgstr "Öffentliches Zertifikat herunterladen"
+
+msgid "Update certificate"
+msgstr "Zertifikat erneuern"
+
+msgid "This generates a new certificate for this switch. HTTPS will restart briefly. Import the new public certificate into your browser afterwards."
+msgstr "Erstellt ein neues Zertifikat für diesen Switch. HTTPS startet kurz neu. Danach das neue öffentliche Zertifikat im Browser importieren."
+
+msgid "Certificate updated. Reload this page and trust the new certificate."
+msgstr "Zertifikat erneuert. Seite neu laden und das neue Zertifikat als vertrauenswürdig importieren."
+
+msgid "Certificate update unavailable. Check the clock and HTTPS configuration."
+msgstr "Erneuerung nicht verfügbar. Uhrzeit und HTTPS-Konfiguration prüfen."
+
+msgid "After firmware installation, a unique certificate is generated automatically once the device clock and its DHCP address are available. No private key is shared between switches."
+msgstr "Nach der Firmware-Installation wird ein eigenes Zertifikat erstellt, sobald Uhrzeit und DHCP-Adresse verfügbar sind. Private Schlüssel werden nicht zwischen Switches geteilt."
+
+msgid "Automatic generation"
+msgstr "Automatische Erstellung"
+
+msgid "System clock"
+msgstr "Systemuhr"
+
+msgid "Ready"
+msgstr "Bereit"
+
+msgid "Waiting for time synchronization"
+msgstr "Warte auf Zeitsynchronisierung"
+
+msgid "Generated"
+msgstr "Erstellt am"
+
+msgid "Waiting for automatic generation"
+msgstr "Warte auf automatische Erstellung"
+
+msgid "Certificate names"
+msgstr "Zertifikatsnamen"
+
+msgid "SHA-256 fingerprint"
+msgstr "SHA-256-Fingerabdruck"
+
+msgid "The certificate encrypts access to this switch. Each administration computer must trust its public certificate to remove browser warnings. A new IP address or certificate renewal can require importing it again."
+msgstr "Das Zertifikat verschlüsselt den Zugriff. Jeder Verwaltungsrechner muss dem öffentlichen Zertifikat vertrauen. Eine neue IP-Adresse oder Erneuerung kann einen erneuten Import erfordern."

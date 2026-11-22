@@ -1,0 +1,51 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "HTTPS Certificate"
+msgstr "Certificado HTTPS"
+
+msgid "Download public certificate"
+msgstr "Descargar certificado público"
+
+msgid "Update certificate"
+msgstr "Actualizar certificado"
+
+msgid "This generates a new certificate for this switch. HTTPS will restart briefly. Import the new public certificate into your browser afterwards."
+msgstr "Genera un certificado nuevo para este switch. HTTPS se reiniciará brevemente. Después importa el nuevo certificado público en el navegador."
+
+msgid "Certificate updated. Reload this page and trust the new certificate."
+msgstr "Certificado actualizado. Recarga la página e importa el nuevo certificado de confianza."
+
+msgid "Certificate update unavailable. Check the clock and HTTPS configuration."
+msgstr "Actualización no disponible. Comprueba la hora y la configuración HTTPS."
+
+msgid "After firmware installation, a unique certificate is generated automatically once the device clock and its DHCP address are available. No private key is shared between switches."
+msgstr "Tras instalar el firmware, se genera un certificado único cuando la hora y la dirección DHCP están disponibles. No se comparten claves privadas entre switches."
+
+msgid "Automatic generation"
+msgstr "Generación automática"
+
+msgid "System clock"
+msgstr "Reloj del sistema"
+
+msgid "Ready"
+msgstr "Preparado"
+
+msgid "Waiting for time synchronization"
+msgstr "Esperando sincronización de hora"
+
+msgid "Generated"
+msgstr "Generado el"
+
+msgid "Waiting for automatic generation"
+msgstr "Esperando generación automática"
+
+msgid "Certificate names"
+msgstr "Nombres del certificado"
+
+msgid "SHA-256 fingerprint"
+msgstr "Huella SHA-256"
+
+msgid "The certificate encrypts access to this switch. Each administration computer must trust its public certificate to remove browser warnings. A new IP address or certificate renewal can require importing it again."
+msgstr "El certificado cifra el acceso. Cada equipo administrador debe confiar en su certificado público. Un cambio de IP o una renovación puede requerir importarlo de nuevo."

@@ -22,6 +22,8 @@ Firmware sperimentale della comunità per **SODOLA SL-SWTGW3C8F / RTL9303 / 8 ×
 
 Root è inizialmente bloccato. Serve una console seriale compatibile per impostare una password personale con `passwd`. Non sono incluse credenziali condivise, chiavi private o copie di sicurezza di dispositivi.
 
-GitHub Actions genera quotidianamente candidati non testati dalle fonti aggiornate. **Nessun aggiornamento automatico sullo switch**, nessuna promozione automatica a versione convalidata e nessuna garanzia di risolvere tutte le CVE.
+GitHub Actions controlla le fonti ogni ora e genera candidati non testati quando cambiano. **Nessun aggiornamento automatico sullo switch**, nessuna promozione automatica a versione convalidata e nessuna garanzia di risolvere tutte le CVE.
 
 Home Assistant: sono disponibili istruzioni e una ACL opzionale di sola lettura. La gestione completa di porte/VLAN non è stata convalidata e può richiedere azioni personalizzate.
+
+[Certificati HTTPS](docs/HTTPS.md)
