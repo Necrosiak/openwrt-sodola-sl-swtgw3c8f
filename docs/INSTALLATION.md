@@ -1,3 +1,5 @@
+[English](en/GUIDE.md) · [Français](INSTALLATION.md) · [Deutsch](de/GUIDE.md) · [Español](es/GUIDE.md) · [Italiano](it/GUIDE.md) · [Português](pt/GUIDE.md)
+
 # Installation et récupération
 
 ## Avant tout flash

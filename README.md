@@ -1,38 +1,30 @@
 # Nekyron OpenWrt — SODOLA SL-SWTGW3C8F
 
-[English](README.en.md) · Français
+[English](README.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Español](README.es.md) · [Italiano](README.it.md) · [Português](README.pt.md)
 
-![Nekyron Network Core](docs/switch-core.svg)
+Community experimental firmware for **SL-SWTGW3C8F / RTL9303 / 8 × SFP+ / 128 MiB RAM / 16 MiB SPI flash**. Not an official OpenWrt or SODOLA release. Other switches sharing the same SoC are not automatically compatible.
 
-Firmware communautaire expérimental pour **SODOLA SL-SWTGW3C8F, RTL9303, 8 × SFP+, 128 Mio RAM / 16 Mio flash**. Ce projet n'est ni un firmware officiel SODOLA, ni un profil officiellement pris en charge par OpenWrt. Une puce identique ne suffit pas à rendre un autre modèle compatible.
+The public build includes the local board profile and QINIYEK / RTL8261BE fixes, LuCI HTTPS, the lightweight green Nekyron theme, disabled Adblock-fast, and packet/network diagnostic tools. Management uses the upstream network's DHCP. A direct maintenance address is available at `169.254.1.1/24`.
 
-**[Téléchargements](../../releases) · [Installation](docs/INSTALLATION.md) · [Sécurité et mises à jour](docs/SECURITY.md) · [Home Assistant](docs/HOME-ASSISTANT.md) · [Langues](docs/LANGUAGES.md)**
+**No shared root password. Serial access is required to set your own password with `passwd`.** Keys and certificates are generated on each device. No private device backups, captured traffic, MAC addresses or household network settings are distributed.
 
-## Inclus
+[Downloads](../../releases) · [French documentation](README.fr.md) · [English setup and safety guide](docs/en/GUIDE.md) · [Detailed technical reference (French)](docs/INSTALLATION.md)
 
-- OpenWrt `realtek/rtl930x`, noyau 6.18.64 pour la version initiale, sources et feeds épinglés.
-- Profil de carte SODOLA et correctifs locaux pour certains modules SFP+ cuivre QINIYEK / RTL8261BE : délai RollBall, conservation de leur configuration autonome, mode SGMII à 1 Gb/s.
-- Gestion **client DHCP** ; adresse de maintenance universelle `169.254.1.1/24`. Aucun bail, adresse MAC ou mot de passe d'une installation particulière n'est inclus.
-- LuCI HTTPS, thème **Nekyron** noir/vert : SVG locaux, fond Matrix, illustration et huit ports reflétant les données natives de LuCI. Argon et Bootstrap restent disponibles.
-- `adblock-fast` avec interface LuCI, **désactivé**. `tcpdump-mini`, iperf3, ethtool, LLDP, SNMP, SQM et pilotes présents selon le manifeste. Les services optionnels restent désactivés au premier démarrage.
-- Traductions LuCI distribuées en paquets séparés pour les langues disponibles ; les textes fonctionnels du thème réutilisent les catalogues natifs.
-- Recettes de construction et construction GitHub Actions périodique de candidats amont, **sans flash automatique**.
+## Validation boundary
 
-## État de validation
+The earlier kernel/platform build was booted in RAM and flash on one device; management DHCP and a 1 Gb/s link were tested, and negotiated 2.5 / 10 Gb/s links were observed. The newly rebuilt complete public image **has not been booted on hardware**. Compilation, image CRC, size, firstboot configuration emulation and privacy checks do not establish full hardware compatibility or line-rate switching.
 
-Le socle précédent a démarré en RAM puis en flash sur un exemplaire de cette carte. Un lien à 1 Gb/s, DHCP et gestion HTTPS ont été testés. Des liens négociés à 2,5 et 10 Gb/s ont été observés. Un test Internet sur une machine reliée à 2,5 Gb/s a atteint environ 2,37 Gb/s en réception et 2,36 Gb/s en émission ; cela ne valide pas un débit de commutation à 10 Gb/s entre plusieurs ports.
+Test initramfs in RAM before flashing and keep your own verified stock backups. Never force an incompatible sysupgrade image. Do not use generic automatic firmware upgrades on this custom board.
 
-**Les images publiques reconstruites avec le thème et les compléments sont des images distinctes : elles ne sont pas encore démarrées sur matériel.** Les vérifications de compilation, de CRC, de taille et de contenu ne remplacent pas un essai en RAM. Consultez `validation.json` dans chaque téléchargement.
+## Updates and languages
 
-## Première utilisation
+GitHub Actions prepares an upstream candidate daily and can run pinned builds manually. Patch conflicts fail the build. There is **no automatic flashing or stable release promotion**, and no guarantee that every CVE is fixed. Review Actions results and validate hardware before installing candidates.
 
-Le mot de passe root est verrouillé au premier démarrage. Une **console série compatible et un accès physique** sont nécessaires pour définir votre propre mot de passe avec `passwd`. Les clés SSH et le certificat HTTPS sont générés sur chaque appareil. Le serveur DHCP reste désactivé : la box conserve son rôle.
+English is the source language; French is embedded. The release provides 42 LuCI language packs as separate APKs so users can install their own language without consuming flash for all translations. Functional theme labels use native LuCI catalogs; upstream translation completeness varies.
 
-Ne flashez pas une image destinée à un autre switch. La prise en charge d'un module cuivre ne garantit pas celle de toutes ses révisions. Gardez votre propre sauvegarde constructeur hors ligne ; aucune sauvegarde de l'appareil utilisé pour le développement n'est publiée.
+## Build
 
-## Construire
-
-Sur Linux avec les dépendances OpenWrt installées :
+Install OpenWrt build prerequisites on Linux, then:
 
 ```sh
 JOBS=4 scripts/build.sh "$PWD/build"
@@ -40,8 +32,4 @@ python3 scripts/audit.py --tree . --build build
 python3 scripts/collect.py build artifacts
 ```
 
-`--rolling` suit les sources amont actuelles et construit un **candidat non testé**. Un conflit de correctif arrête la construction. [Détails et provenance](docs/BUILD.md).
-
-## Licences
-
-OpenWrt et ses composants conservent leurs licences respectives. Le profil de carte et les correctifs noyau suivent GPL-2.0-or-later ; les templates Argon et adaptations du thème sont sous Apache-2.0, avec les attributions amont conservées. Adblock-fast suit AGPL-3.0-or-later. Voir [licences et sources](docs/LICENSES.md).
+The source lock, patches, package sources and corresponding-source release bundle allow reconstruction. Builds are not claimed to be byte-identical. [Licenses and upstream attribution](docs/LICENSES.md).

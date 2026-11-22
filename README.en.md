@@ -1,12 +1,14 @@
 # Nekyron OpenWrt — SODOLA SL-SWTGW3C8F
 
+[English](README.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Español](README.es.md) · [Italiano](README.it.md) · [Português](README.pt.md)
+
 Community experimental firmware for **SL-SWTGW3C8F / RTL9303 / 8 × SFP+ / 128 MiB RAM / 16 MiB SPI flash**. Not an official OpenWrt or SODOLA release. Other switches sharing the same SoC are not automatically compatible.
 
 The public build includes the local board profile and QINIYEK / RTL8261BE fixes, LuCI HTTPS, the lightweight green Nekyron theme, disabled Adblock-fast, and packet/network diagnostic tools. Management uses the upstream network's DHCP. A direct maintenance address is available at `169.254.1.1/24`.
 
 **No shared root password. Serial access is required to set your own password with `passwd`.** Keys and certificates are generated on each device. No private device backups, captured traffic, MAC addresses or household network settings are distributed.
 
-[Downloads](../../releases) · [French documentation](README.md) · [Installation](docs/INSTALLATION.md) · [Build](docs/BUILD.md) · [Security refresh](docs/SECURITY.md) · [Home Assistant](docs/HOME-ASSISTANT.md) · [Languages](docs/LANGUAGES.md)
+[Downloads](../../releases) · [French documentation](README.fr.md) · [English setup and safety guide](docs/en/GUIDE.md) · [Detailed technical reference (French)](docs/INSTALLATION.md)
 
 ## Validation boundary
 
