@@ -25,4 +25,3 @@ Root está bloqueado inicialmente. Se necesita una consola serie compatible para
 GitHub Actions genera candidatos diarios sin probar a partir de las fuentes actuales. **No instala el firmware automáticamente**, no promueve versiones validadas y no garantiza resolver todas las vulnerabilidades CVE.
 
 Home Assistant: se proporcionan instrucciones y una ACL opcional de solo lectura. La administración completa de puertos/VLAN no está validada y puede requerir acciones personalizadas.
-

@@ -25,4 +25,3 @@ Root ist anfangs gesperrt. Mit einer kompatiblen seriellen Konsole und `passwd` 
 Tägliche GitHub-Actions-Builds erzeugen ungetestete Kandidaten aus aktuellen Upstream-Quellen. **Kein automatisches Flashen**, keine automatische Freigabe als validierte Version und keine Garantie, dass alle CVEs behoben sind.
 
 Home Assistant: Integrationshinweise und ein optionales Nur-Lese-ACL sind vorbereitet. Die vollständige Steuerung von Ports/VLANs ist nicht getestet und kann eigene Aktionen erfordern.
-

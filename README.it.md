@@ -25,4 +25,3 @@ Root è inizialmente bloccato. Serve una console seriale compatibile per imposta
 GitHub Actions genera quotidianamente candidati non testati dalle fonti aggiornate. **Nessun aggiornamento automatico sullo switch**, nessuna promozione automatica a versione convalidata e nessuna garanzia di risolvere tutte le CVE.
 
 Home Assistant: sono disponibili istruzioni e una ACL opzionale di sola lettura. La gestione completa di porte/VLAN non è stata convalidata e può richiedere azioni personalizzate.
-
