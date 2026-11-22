@@ -1,0 +1,55 @@
+config defaults
+ option input 'REJECT'
+ option output 'ACCEPT'
+ option forward 'REJECT'
+ option synflood_protect '1'
+
+config zone
+ option name 'lan'
+ list network 'lan'
+ list network 'maintenance'
+ option input 'REJECT'
+ option output 'ACCEPT'
+ option forward 'REJECT'
+
+config rule
+ option name 'Management-IPv4'
+ option src 'lan'
+ option family 'ipv4'
+ option proto 'tcp'
+ option dest_port '22 80 443'
+ option target 'ACCEPT'
+
+config rule
+ option name 'DHCP-client'
+ option src 'lan'
+ option family 'ipv4'
+ option proto 'udp'
+ option src_port '67'
+ option dest_port '68'
+ option target 'ACCEPT'
+
+config rule
+ option name 'Ping'
+ option src 'lan'
+ option family 'ipv4'
+ option proto 'icmp'
+ option icmp_type 'echo-request'
+ option limit '10/second'
+ option target 'ACCEPT'
+
+config rule
+ option name 'ICMPv6-link-control'
+ option src 'lan'
+ option family 'ipv6'
+ option proto 'icmp'
+ list icmp_type 'destination-unreachable'
+ list icmp_type 'packet-too-big'
+ list icmp_type 'time-exceeded'
+ list icmp_type 'bad-header'
+ list icmp_type 'unknown-header-type'
+ list icmp_type 'router-advertisement'
+ list icmp_type 'neighbour-solicitation'
+ list icmp_type 'neighbour-advertisement'
+ option limit '1000/second'
+ option target 'ACCEPT'

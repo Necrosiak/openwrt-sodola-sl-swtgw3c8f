@@ -1,0 +1,108 @@
+{#
+	Argon is a clean HTML5 theme for LuCI. It is based on luci-theme-material Argon Template
+
+	luci-theme-argon
+	Copyright 2020 Jerrykuku <jerrykuku@qq.com>
+
+	Have a bug? Please create an issue here on GitHub!
+	https://github.com/jerrykuku/luci-theme-argon/issues
+
+	luci-theme-material:
+	Copyright 2015 Lutty Yang <lutty@wcan.in>
+
+	Argon Theme
+	https://demos.creative-tim.com/argon-dashboard/index.html
+
+	Licensed to the public under the Apache License 2.0
+-#}
+
+{%
+	import { getuid, getspnam } from 'luci.core';
+
+	const hostname = striptags(ubus.call('system', 'board')?.hostname ?? '?');
+	// First-child routes keep the entry URL while resolving to a deeper page.
+	const page_path = length(ctx.path) > length(ctx.request_path) ? ctx.path : ctx.request_path;
+	include('themes/' + theme + '/head', { hostname: hostname, is_login: false });
+%}
+
+<body
+	class="lang_{{ dispatcher.lang }} {{ node?.title ? ` - ${striptags(node.title)}` : '' }} {% if (ctx.authsession): %}logged-in{% endif %}"
+	data-page="{{ entityencode(join('-', page_path), true) }}">
+
+	<a class="skip-link" href="#maincontent">{{ _('Skip to content') }}</a>
+	<div class="main">
+		<div class="main-left" id="mainmenu" style="display:none">
+			<div class="sidenav-header d-flex align-items-center">
+				<a class="brand nekyron-brand" href="{{ dispatcher.build_url('admin/status/overview') }}" title="{{ entityencode(hostname, true) }}"><img src="{{ media }}/nekyron-skull.png" width="36" height="36" alt=""><span><strong>NEKYRON<span class="neon-dot">.</span></strong><small>NETWORK CONTROL</small></span></a>
+				<div class="ml-auto">
+					<!-- Sidenav toggler -->
+					<div class="sidenav-toggler d-none d-xl-block active" data-action="sidenav-unpin"
+						data-target="#sidenav-main">
+						<div class="sidenav-toggler-inner">
+							<i class="sidenav-toggler-line"></i>
+							<i class="sidenav-toggler-line"></i>
+							<i class="sidenav-toggler-line"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="main-right">
+			<header class="bg-primary">
+				<div class="fill">
+					<div class="container">
+						<div class="flex1">
+							<button type="button" class="showSide" aria-label="{{ entityencode(_('Toggle navigation'), true) }}" aria-controls="mainmenu" aria-expanded="false"></button>
+							<a class="brand nekyron-brand" href="{{ dispatcher.build_url('admin/status/overview') }}" title="{{ entityencode(hostname, true) }}"><img src="{{ media }}/nekyron-skull.png" width="36" height="36" alt=""><span><strong>NEKYRON<span class="neon-dot">.</span></strong><small>NETWORK CONTROL</small></span></a>
+						</div>
+						<div class="header-actions">
+							<div class="status" id="indicators"></div>
+							<div id="argon-appearance" hidden></div>
+						</div>
+					</div>
+				</div>
+			</header>
+			<div class="darkMask"></div>
+			<main id="maincontent" tabindex="-1">
+				<div class="container">
+					{% if (getuid() == 0 && getspnam('root')?.pwdp === ''): %}
+					<div class="alert-message error">
+						<h4>{{ _('No password set!') }}</h4>
+						<p>{{ _('There is no password set on this router. Please configure a root password to protect the web interface.') }}</p>
+						{% if (dispatcher.lookup("admin/system/admin")): %}
+						<div class="right"><a class="btn" href="{{ dispatcher.build_url("admin/system/admin") }}">{{ _('Go to password configuration...') }}</a></div>
+						{% endif %}
+					</div>
+					{% endif %}
+
+				<noscript>
+					<div class="alert-message error">
+						<h4>{{ _('JavaScript required!') }}</h4>
+						<p>{{ _('You must enable JavaScript in your browser or LuCI will not work properly.') }}</p>
+					</div>
+				</noscript>
+
+					<section class="nk-hub" aria-label="Nekyron Network Control">
+ <div class="nk-hero">
+  <div class="nk-hero-copy">
+   <div class="nk-eyebrow"><span class="nk-pixel"></span> NEKYRON / {{ _('Network') }}</div>
+   <h1>{{ _('Network') }}<br><em>{{ _('Overview') }}</em></h1>
+   <p class="nk-intro">{{ _('Interfaces') }} · {{ _('Devices') }} · {{ _('Diagnostics') }}</p>
+   <div class="nk-hero-actions"><a class="nk-cta" href="{{ dispatcher.build_url('admin/network/network') }}">{{ _('Interfaces') }} <span aria-hidden="true">↗</span></a><a class="nk-ghost" href="{{ dispatcher.build_url('admin/network/switch-vlan') }}">{{ _('Switch') }} &amp; {{ _('VLAN') }} <span aria-hidden="true">→</span></a></div>
+   <div class="nk-device"><span>SODOLA / 8 × 10 GbE</span><code>{{ hostname }}</code></div>
+  </div>
+  <div class="nk-visual"><img src="{{ media }}/switch-core.svg" width="680" height="400" alt="Illustration d’un switch huit ports relié au réseau, au stockage et aux clients"><span class="nk-visual-caption">01 / NETWORK CORE</span></div>
+ </div>
+ <div class="nk-portdeck" hidden>
+  <div class="nk-deck-label"><span class="nk-eyebrow">{{ _('Port status') }}</span><strong><span id="nk-active">—</span><small> / 8 · {{ _('Active') }}</small></strong><span class="nk-deck-caption">{{ _('Link Speed') }}</span></div>
+  <div class="nk-ports" aria-label="{{ entityencode(_('Port status'), true) }}">{% for (let i = 1; i <= 8; i++): %}<div class="nk-port" data-port="lan{{ i }}"><span class="nk-port-name">{{ sprintf('%02d', i) }}</span><svg viewBox="0 0 42 31" aria-hidden="true"><path d="M3 4h36v23H3z"/><path d="M8 9h26v13H8zM13 25h16"/></svg><strong>—</strong><span class="nk-port-state">{{ _('Loading data…') }}</span></div>{% endfor %}</div>
+ </div>
+ <div class="nk-shortcuts">
+  <a href="{{ dispatcher.build_url('admin/network/network') }}"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="11" y="3" width="10" height="8" rx="1"/><path d="M16 11v7M6 18h20M6 18v4m10-4v4m10-4v4"/><rect x="2" y="22" width="8" height="7" rx="1"/><rect x="12" y="22" width="8" height="7" rx="1"/><rect x="22" y="22" width="8" height="7" rx="1"/></svg><span><small>{{ _('Network') }}</small><strong>{{ _('Interfaces') }}</strong></span><b aria-hidden="true">↗</b></a>
+  <a href="{{ dispatcher.build_url('admin/network/switch-vlan') }}"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="8" width="28" height="17" rx="2"/><path d="M7 13h3v6H7zm7 0h3v6h-3zm7 0h3v6h-3M6 28h20"/></svg><span><small>{{ _('VLANs') }}</small><strong>{{ _('Switch') }} &amp; {{ _('VLAN') }}</strong></span><b aria-hidden="true">↗</b></a>
+  <a href="{{ dispatcher.build_url('admin/status/realtime') }}"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 3v26h27M5 20h5l4-12 5 16 4-9h7"/></svg><span><small>{{ _('Status') }}</small><strong>{{ _('Realtime Graphs') }}</strong></span><b aria-hidden="true">↗</b></a>
+ </div>
+</section>
+<div class="nk-pagebar"><span class="nk-eyebrow">NEKYRON / {{ _('System') }}</span><span>{{ hostname }}</span></div>
+
+<div id="tabmenu" style="display:none"></div>

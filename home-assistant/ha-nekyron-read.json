@@ -1,0 +1,16 @@
+{
+  "ha-nekyron-read": {
+    "description": "Optional read-only OpenWrt telemetry for Home Assistant",
+    "read": {
+      "ubus": {
+        "system": ["board", "info"],
+        "network.device": ["status"],
+        "network.interface": ["dump"],
+        "uci": ["get"],
+        "service": ["list"]
+      },
+      "uci": ["network", "system"]
+    },
+    "write": {}
+  }
+}

@@ -1,0 +1,52 @@
+#!/bin/sh
+# Public SODOLA switch defaults. No embedded password or private key.
+uci -q batch <<'EOF'
+set system.@system[0].hostname='switch-sodola'
+set system.@system[0].zonename='UTC'
+set system.@system[0].timezone='UTC'
+set network.lan.proto='dhcp'
+delete network.lan.ipaddr
+delete network.lan.ip6assign
+delete network.wan
+delete network.wan6
+set network.maintenance=interface
+set network.maintenance.device='switch.1'
+set network.maintenance.proto='static'
+set network.maintenance.ipaddr='169.254.1.1'
+set network.maintenance.netmask='255.255.255.0'
+set network.maintenance.delegate='0'
+set luci.themes.Nekyron='/luci-static/nekyron'
+set luci.main.mediaurlbase='/luci-static/nekyron'
+set adblock-fast.config.enabled='0'
+set adblock-fast.config.force_dns='0'
+set adblock-fast.config.download_allow_insecure='0'
+set adblock-fast.config.compressed_cache='0'
+set luci.main.lang='auto'
+set dropbear.@dropbear[0].PasswordAuth='on'
+set dropbear.@dropbear[0].RootPasswordAuth='on'
+set dropbear.@dropbear[0].IdleTimeout='300'
+set dropbear.@dropbear[0].MaxAuthTries='3'
+set uhttpd.main.redirect_https='1'
+delete snmpd.public
+delete snmpd.private
+delete snmpd.public6
+delete snmpd.private6
+set snmpd.@system[0].sysName='switch-sodola'
+set snmpd.@system[0].sysLocation=''
+set snmpd.@system[0].sysContact=''
+set dhcp.lan.ignore='1'
+set dhcp.lan.ra='disabled'
+set dhcp.lan.dhcpv6='disabled'
+set dhcp.lan.ndp='disabled'
+commit
+EOF
+# Lock the initially empty root password: use passwd on serial console first.
+if [ -z "$(awk -F: '$1=="root"{print $2}' /etc/shadow)" ]; then
+ passwd -l root >/dev/null 2>&1
+fi
+for service in dnsmasq odhcpd snmpd lldpd sqm adblock-fast; do
+ # OpenWrt service enablement is represented by these rc.d links.
+ rm -f "${IPKG_INSTROOT:-}/etc/rc.d/"S[0-9][0-9]"$service" "${IPKG_INSTROOT:-}/etc/rc.d/"K[0-9][0-9]"$service"
+ done
+# Leave these packages installed; no DHCP/RA servers or routing by default.
+exit 0

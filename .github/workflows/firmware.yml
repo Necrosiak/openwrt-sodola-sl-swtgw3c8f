@@ -1,0 +1,52 @@
+name: Firmware and upstream security refresh
+on:
+  workflow_dispatch:
+    inputs:
+      rolling:
+        description: Build current upstream as an untested candidate
+        type: boolean
+        default: false
+  schedule:
+    - cron: '30 3 * * *'
+permissions:
+  contents: read
+concurrency:
+  group: firmware-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential clang flex bison g++ gawk gcc-multilib gettext git libncurses-dev libssl-dev python3-setuptools rsync swig unzip zlib1g-dev file wget curl zstd libelf-dev
+      - name: Rebuild with local board and PHY fixes
+        env:
+          ROLLING: ${{ github.event_name == 'schedule' || inputs.rolling }}
+          JOBS: '2'
+        run: |
+          if [ "$ROLLING" = true ]; then
+            scripts/build.sh "$GITHUB_WORKSPACE/build" --rolling
+          else
+            scripts/build.sh "$GITHUB_WORKSPACE/build"
+          fi
+      - name: Audit and collect candidate
+        run: |
+          python3 scripts/audit.py --tree . --build build
+          python3 scripts/collect.py build artifacts
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: sodola-candidate-NOT-HARDWARE-TESTED-${{ github.run_number }}
+          path: artifacts/
+          retention-days: 14
+          if-no-files-found: error
+      - name: Validation boundary
+        run: |
+          echo '## Built, not hardware validated' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Upstream refresh may include security fixes and functional changes. No CVE-completeness guarantee. No automatic flash or stable release publication.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'If patches no longer apply, the build fails rather than silently dropping them.' >> "$GITHUB_STEP_SUMMARY"

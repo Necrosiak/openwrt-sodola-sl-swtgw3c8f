@@ -1,0 +1,1 @@
+<div class="main-bg nekyron-login-bg" id="main-bg" aria-hidden="true"><div class="nekyron-login-art"><img src="{{ media }}/nekyron-skull.png" width="128" height="128" alt=""><strong>NEKYRON<span>NEKYRON NETWORK</span></strong><p>{{ _('Network') }} · {{ _('Overview') }}</p></div></div>

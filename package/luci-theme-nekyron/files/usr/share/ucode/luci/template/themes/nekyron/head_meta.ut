@@ -1,0 +1,28 @@
+{%
+	import { get_branding } from 'luci.argon-branding';
+	const branding = get_branding();
+%}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nekyron Control · {{ hostname }}{{ node?.title ? ` - ${striptags(node.title)}` : '' }}</title>
+
+<!-- SEO and Description -->
+<meta name="robots" content="noindex, nofollow">
+<meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+
+<!-- Mobile and PWA -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="{{ hostname }} - LuCI">
+
+<!-- Theme and Colors -->
+{% if (mode == 'normal'): %}
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="{{ primary }}">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="{{ dark_primary }}">
+{% else %}
+<meta name="theme-color" content="{{ bar_color }}">
+{% endif %}
+
+<!-- Local Nekyron identity -->
+<link rel="icon" type="image/png" href="{{ media }}/nekyron-skull.png">
+<link rel="apple-touch-icon" href="{{ media }}/nekyron-skull.png">

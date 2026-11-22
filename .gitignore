@@ -1,0 +1,12 @@
+/build/
+/artifacts/
+/.cache/
+*.key
+*.pem
+*.pcap
+*.pcapng
+*PRIVE*
+.env*
+
+__pycache__/
+*.pyc

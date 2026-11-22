@@ -1,0 +1,217 @@
+diff --git a/target/linux/realtek/image/rtl930x.mk b/target/linux/realtek/image/rtl930x.mk
+index db41390..198c4a6 100644
+--- a/target/linux/realtek/image/rtl930x.mk
++++ b/target/linux/realtek/image/rtl930x.mk
+@@ -576,3 +576,15 @@ define Device/zyxel_xmg1915-10ep
+   DEVICE_PACKAGES += kmod-pse-realtek-mcu-uart
+ endef
+ TARGET_DEVICES += zyxel_xmg1915-10ep
++
++# Local SODOLA profile: boot-test initramfs before sysupgrade.
++define Device/sodola_sl-swtgw3c8f
++  SOC := rtl9303
++  UIMAGE_MAGIC := 0x83800000
++  DEVICE_VENDOR := SODOLA
++  DEVICE_MODEL := SL-SWTGW3C8F
++  DEVICE_PACKAGES := rtl826x-firmware
++  IMAGE_SIZE := 12288k
++  $(Device/kernel-lzma)
++endef
++TARGET_DEVICES += sodola_sl-swtgw3c8f
+--- /dev/null
++++ b/target/linux/realtek/dts/rtl9303_sodola_sl-swtgw3c8f.dts
+@@ -0,0 +1,7 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++#include "rtl9303_horaco_zx-swtgw2c8f.dtsi"
++/ {
++ compatible = "sodola,sl-swtgw3c8f", "realtek,rtl9303-soc";
++ model = "SODOLA SL-SWTGW3C8F (custom)";
++};
++&spi0 { flash@0 { spi-max-frequency = <25000000>; }; };
+--- /dev/null
++++ b/target/linux/realtek/patches-6.18/999-sodola-sfp-diagnostics.patch
+@@ -0,0 +1,14 @@
++--- a/drivers/net/phy/sfp.c
+++++ b/drivers/net/phy/sfp.c
++@@ -2064,6 +2064,11 @@
++ {
++ 	struct sfp *sfp = s->private;
++ 
+++	seq_printf(s, "MDIO protocol: %u\n", sfp->mdio_protocol);
+++	seq_printf(s, "Quirk vendor: %s\n", sfp->quirk ? sfp->quirk->vendor : "none");
+++	seq_printf(s, "Quirk part: %s\n", sfp->quirk ? sfp->quirk->part : "none");
+++	seq_printf(s, "Effective connector: 0x%02x extended_cc: 0x%02x\n",
+++		   sfp->id.base.connector, sfp->id.base.extended_cc);
++ 	seq_printf(s, "Module state: %s\n",
++ 		   mod_state_to_str(sfp->sm_mod_state));
++ 	seq_printf(s, "Module probe attempts: %d %d\n",
+--- /dev/null
++++ b/target/linux/realtek/patches-6.18/9999-sodola-probe-retry-diagnostics.patch
+@@ -0,0 +1,43 @@
++--- a/drivers/net/phy/sfp.c
+++++ b/drivers/net/phy/sfp.c
++@@ -2178,6 +2178,14 @@
++ 		return PTR_ERR(phy);
++ 	}
++ 
+++	/* Retry a RollBall module whose management interface is not ready yet. */
+++	if (is_c45 && sfp->mdio_protocol == MDIO_I2C_ROLLBALL &&
+++	    !phy->c45_ids.device_ids[1]) {
+++		dev_info(sfp->dev, "RollBall PMA identifier not ready, retrying\n");
+++		phy_device_free(phy);
+++		return -ENODEV;
+++	}
+++
++ 	/* Mark this PHY as being on a SFP module */
++ 	phy->is_on_sfp_module = true;
++ 
++--- a/drivers/net/phy/realtek/realtek_main.c
+++++ b/drivers/net/phy/realtek/realtek_main.c
++@@ -3835,12 +3835,18 @@
++ 	phy_disable_eee_mode(phydev, ETHTOOL_LINK_MODE_5000baseT_Full_BIT);
++ 	phy_disable_eee_mode(phydev, ETHTOOL_LINK_MODE_10000baseT_Full_BIT);
++ 
+++	phydev_info(phydev, "diagnostic: starting patch database init\n");
++ 	ret = rtl826x_patch_db_init(phydev);
++-	if (ret < 0)
++-		return ret;
++-
++-	if (IS_ENABLED(CONFIG_REALTEK_PHY_HWMON))
++-		return rtl822x_hwmon_init(phydev);
+++	phydev_info(phydev, "diagnostic: patch database returned %d\n", ret);
+++	if (ret < 0)
+++		return ret;
+++
+++	if (IS_ENABLED(CONFIG_REALTEK_PHY_HWMON)) {
+++		phydev_info(phydev, "diagnostic: entering hwmon init\n");
+++		ret = rtl822x_hwmon_init(phydev);
+++		phydev_info(phydev, "diagnostic: hwmon returned %d\n", ret);
+++		return ret;
+++	}
++ 
++ 	return 0;
++ }
+--- /dev/null
++++ b/target/linux/realtek/patches-6.18/99999-sodola-mdio-trace.patch
+@@ -0,0 +1,18 @@
++--- a/drivers/net/phy/sfp.c
+++++ b/drivers/net/phy/sfp.c
++@@ -2186,6 +2186,15 @@
++ 		return -ENODEV;
++ 	}
++ 
+++	if (is_c45 && sfp->mdio_protocol == MDIO_I2C_ROLLBALL) {
+++		dev_info(sfp->dev, "diagnostic: PMA %08x PCS %08x AN %08x VEND2 %08x\n",
+++			 phy->c45_ids.device_ids[1], phy->c45_ids.device_ids[3],
+++			 phy->c45_ids.device_ids[7], phy->c45_ids.device_ids[31]);
+++		dev_info(sfp->dev, "diagnostic: model %04x version %04x\n",
+++			 mdiobus_c45_read(sfp->i2c_mii, addr, 30, 0x103),
+++			 mdiobus_c45_read(sfp->i2c_mii, addr, 30, 0x104));
+++	}
+++
++ 	/* Mark this PHY as being on a SFP module */
++ 	phy->is_on_sfp_module = true;
++ 
+--- /dev/null
++++ b/target/linux/realtek/patches-6.18/999999-sodola-rollball-slow-completion.patch
+@@ -0,0 +1,14 @@
++--- a/drivers/net/mdio/mdio-smbus.c
+++++ b/drivers/net/mdio/mdio-smbus.c
++@@ -176,7 +176,10 @@
++ 	union i2c_smbus_data data;
++ 	int i, ret;
++ 
++-	i = 10;
+++	/* QINIYEK BJ-SFP-10G-T / RTL8261BE measured at 340-360 ms.
+++	 * Keep commands serialized until completion; allow up to one second.
+++	 */
+++	i = 49;
++ 	do {
++ 		msleep(20);
++ 
+--- /dev/null
++++ b/target/linux/realtek/patches-6.18/9999999-sodola-qiniyek-self-managed.patch
+@@ -0,0 +1,83 @@
++--- a/drivers/net/phy/sfp.c
+++++ b/drivers/net/phy/sfp.c
++@@ -2195,6 +2195,21 @@
++ 			 mdiobus_c45_read(sfp->i2c_mii, addr, 30, 0x104));
++ 	}
++ 
+++	/* This module MCU owns firmware and copper-side configuration. */
+++	if (sfp->quirk && !strcmp(sfp->quirk->vendor, "QINIYEK") &&
+++	    !strcmp(sfp->quirk->part, "BJ-SFP-10G-T")) {
+++		static const struct property_entry props[] = {
+++			PROPERTY_ENTRY_BOOL("realtek,sfp-self-managed"),
+++			{ }
+++		};
+++
+++		err = device_create_managed_software_node(&phy->mdio.dev, props, NULL);
+++		if (err) {
+++			phy_device_free(phy);
+++			return err;
+++		}
+++	}
+++
++ 	/* Mark this PHY as being on a SFP module */
++ 	phy->is_on_sfp_module = true;
++ 
++--- a/drivers/net/phy/realtek/realtek_main.c
+++++ b/drivers/net/phy/realtek/realtek_main.c
++@@ -3777,9 +3777,18 @@
++ 			      msecs_to_jiffies(RTL826X_SDS_POLL_MS));
++ }
++ 
+++static bool rtl826x_sfp_self_managed(struct phy_device *phydev)
+++{
+++	return phydev->is_on_sfp_module &&
+++		device_property_read_bool(&phydev->mdio.dev, "realtek,sfp-self-managed");
+++}
+++
++ static void rtl826x_link_change_notify(struct phy_device *phydev)
++ {
++ 	struct rtl826x_priv *priv = phydev->priv;
+++
+++	if (rtl826x_sfp_self_managed(phydev))
+++		return;
++ 
++ 	if (phydev->state != PHY_RUNNING) {
++ 		if (!priv->sds_work_disabled) {
++@@ -3888,6 +3897,11 @@
++ 	const unsigned int max_dereset_tries = 5;
++ 	unsigned int tries = 0;
++ 	int ret;
+++
+++	if (rtl826x_sfp_self_managed(phydev)) {
+++		phydev_info(phydev, "preserving self-managed SFP configuration\n");
+++		return 0;
+++	}
++ 
++ 	/* Suppress PHY interrupt output before the hardware reset below.
++ 	 * The RTL8261N asserts its interrupt pin during power-on reset, which
++@@ -3984,6 +3998,9 @@
++ 	u16 reg;
++ 	int ret;
++ 
+++	if (rtl826x_sfp_self_managed(phydev))
+++		return 0;
+++
++ 	phydev->mdix_ctrl = ETH_TP_MDI_AUTO;
++ 	if (phydev->autoneg == AUTONEG_DISABLE)
++ 		return genphy_c45_pma_setup_forced(phydev);
++@@ -4046,7 +4063,14 @@
++ 			return ret;
++ 	}
++ 
++-	return genphy_c45_read_mdix(phydev);
+++	ret = genphy_c45_read_mdix(phydev);
+++	if (!ret && phydev->link && rtl826x_sfp_self_managed(phydev)) {
+++		if (phydev->speed == SPEED_1000)
+++			phydev->interface = PHY_INTERFACE_MODE_SGMII;
+++		else if (phydev->speed == SPEED_10000)
+++			phydev->interface = PHY_INTERFACE_MODE_10GBASER;
+++	}
+++	return ret;
++ }
++ 
++ static int rtl826x_config_intr(struct phy_device *phydev)
