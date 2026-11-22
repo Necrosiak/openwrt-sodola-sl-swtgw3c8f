@@ -35,3 +35,5 @@ python3 scripts/collect.py build artifacts
 The source lock, patches, package sources and corresponding-source release bundle allow reconstruction. Builds are not claimed to be byte-identical. [Licenses and upstream attribution](docs/LICENSES.md).
 
 [HTTPS certificates](docs/HTTPS.md)
+
+[Signed firmware updates](docs/UPDATES.md)

@@ -1,0 +1,15 @@
+{
+  "admin/system/nekyron-update": {
+    "title": "Nekyron firmware updates",
+    "order": 66,
+    "action": {
+      "type": "view",
+      "path": "nekyron/update"
+    },
+    "depends": {
+      "acl": [
+        "nekyron-update"
+      ]
+    }
+  }
+}

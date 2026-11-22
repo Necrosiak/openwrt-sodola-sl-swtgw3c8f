@@ -1,0 +1,42 @@
+'use strict';
+import { readfile, popen, access } from 'fs';
+import { cursor } from 'uci';
+function load(path) { try { return json(readfile(path) ?? '{}'); } catch(e) { return {}; } }
+function run(args) {
+ const p=popen(join(' ',map(args,(s)=>"'"+replace(''+s,/'/g,"'\\''")+"'"))+' 2>/dev/null');
+ if (!p) return ''; const s=p.read('all'); p.close(); return s ?? '';
+}
+function status() {
+ let current=load('/rom/etc/nekyron-release.json'); if (!length(current)) current=load('/etc/nekyron-release.json');
+ const c=cursor(); const st=load('/var/run/nekyron-update/status.json');
+ return { state:st.state ?? 'idle',error:st.error ?? '',latest:st.latest ?? null,checked:st.checked ?? 0,
+  current:current,enabled:c.get('nekyron-update','main','enabled') == '1',channel:c.get('nekyron-update','main','channel') ?? 'release' };
+}
+function launch(command,token) {
+ const p=popen("(/usr/libexec/nekyron-update-run '"+command+"' '"+token+"' >/dev/null 2>&1 </dev/null &) >/dev/null 2>&1");
+ if (!p) return false; p.close(); return true;
+}
+return { nekyron_update: {
+ status:{call:function(){return status();}},
+ check:{args:{force:false},call:function(req){
+  const s=status(); const now=+run(['/bin/date','+%s']);
+  if (!s.enabled) return {ok:true};
+  if (access('/var/run/nekyron-update/lock')) return {ok:true};
+  if (s.checked>0 && now-s.checked<(req.args.force ? 30 : 300)) return {ok:true};
+  return {ok:launch('check','')};
+ }},
+ action:{args:{command:'',token:'',channel:''},call:function(req){
+  const command=req.args.command;
+  if (command=='channel' && (req.args.channel=='release'||req.args.channel=='candidate')) {
+   if (access('/var/run/nekyron-update/lock')) return {ok:false};
+   const c=cursor();c.set('nekyron-update','main','channel',req.args.channel);c.commit('nekyron-update');
+   run(['/bin/rm','-f','/var/run/nekyron-update/status.json','/var/run/nekyron-update/firmware.bin','/var/run/nekyron-update/manifest.json','/var/run/nekyron-update/manifest.json.sig']);
+   return {ok:launch('check','')};
+  }
+  if ((command!='stage'&&command!='install') || !match(req.args.token,/^[a-f0-9]{64}$/)) return {ok:false};
+  if (access('/var/run/nekyron-update/lock')) return {ok:false,busy:true};
+  const s=status();
+  if (s.latest?.sha256!=req.args.token || (command=='install'&&s.state!='ready')) return {ok:false};
+  return {ok:launch(command,req.args.token)};
+ }}
+} };

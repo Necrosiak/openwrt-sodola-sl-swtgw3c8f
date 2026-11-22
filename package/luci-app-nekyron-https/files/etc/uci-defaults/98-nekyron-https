@@ -1,3 +1,6 @@
 #!/bin/sh
+# First boot after each firmware install/upgrade: renew after NTP, even if
+# sysupgrade retained a valid previous certificate. Ordinary reboots do not reset it.
+rm -f "${IPKG_INSTROOT:-}/etc/nekyron-https.state"
 ln -sf ../init.d/nekyron-https "${IPKG_INSTROOT:-}/etc/rc.d/S96nekyron-https"
 exit 0

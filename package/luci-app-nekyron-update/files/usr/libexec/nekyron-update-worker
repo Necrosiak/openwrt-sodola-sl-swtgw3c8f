@@ -1,0 +1,94 @@
+// SPDX-License-Identifier: Apache-2.0
+'use strict';
+import { readfile, writefile, rename, unlink, popen } from 'fs';
+import { cursor } from 'uci';
+const dir = '/var/run/nekyron-update/';
+const repo = 'https://github.com/Necrosiak/openwrt-sodola-sl-swtgw3c8f';
+const prefix = repo + '/releases/download/';
+function run(args) {
+ const p = popen(join(' ', map(args, (s) => "'" + replace('' + s, /'/g, "'\\''") + "'")) + ' 2>/dev/null');
+ if (!p) return { code: 1, text: '' };
+ const text = p.read('all'); return { code: p.close(), text: text ?? '' };
+}
+function load(path) { try { return json(readfile(path) ?? '{}'); } catch (e) { return {}; } }
+function now() { return +run(['/bin/date', '+%s']).text; }
+function save(st) { writefile(dir + 'status.new', sprintf('%J', st)); rename(dir + 'status.new', dir + 'status.json'); }
+function digest(path) { const r=run(['/bin/busybox','sha256sum',path]); return r.code == 0 ? split(r.text,' ')[0] : ''; }
+let transport_error=false;
+function fetch(url, path, limit) {
+ const r=run(['/usr/bin/curl','--fail','--silent','--location','--proto','=https','--proto-redir','=https','--connect-timeout','10','--max-time','120','--max-filesize',''+limit,'--output',path,'--write-out','%{http_code}','--url',url]);
+ if (r.code != 0 && trim(r.text) != '404') transport_error=true;
+ return r.code == 0;
+}
+function verified(path) {
+ return run(['/usr/bin/usign','-V','-q','-p','/usr/share/nekyron-update/release.pub','-m',path,'-x',path+'.sig']).code == 0;
+}
+function fail(code) { save({ state:'error', error:code, checked:now() }); exit(1); }
+const id=load('/rom/etc/nekyron-release.json');
+const identity=length(id) ? id : load('/etc/nekyron-release.json');
+const board=trim(readfile('/tmp/sysinfo/board_name') ?? '');
+const config=cursor();
+const channel=config.get('nekyron-update','main','channel') == 'candidate' ? 'candidate' : 'release';
+function compatible(m) {
+ return m.schema == 1 && m.board == board && m.board == identity.board && m.flavor == identity.flavor &&
+  m.contract == identity.contract && m.contract == 1 && type(m.version) == 'string' && length(m.version) < 100 &&
+  type(m.build_id) == 'int' && m.build_id > identity.build_id &&
+  type(m.size) == 'int' && m.size > 1048576 && m.size < 12582912 &&
+  type(m.sha256) == 'string' && !!match(m.sha256,/^[a-f0-9]{64}$/) &&
+  type(m.tag) == 'string' && !!match(m.tag,/^[A-Za-z0-9._-]+$/) &&
+  (m.channel == 'release' || (channel == 'candidate' && m.channel == 'candidate')) &&
+  m.url == prefix+m.tag+'/openwrt-realtek-rtl930x-sodola_sl-swtgw3c8f-squashfs-sysupgrade.bin';
+}
+if (config.get('nekyron-update','main','enabled') != '1') fail('disabled');
+if (board != 'sodola,sl-swtgw3c8f' || identity.board != board || !match(identity.flavor ?? '',/^(full|tailscale-lite)$/) || identity.contract != 1 || type(identity.build_id) != 'int') fail('identity');
+const command=ARGV[0] ?? '';
+if (command == 'check') {
+ const old=load(dir+'status.json');
+ if (old.state == 'ready' || old.state == 'installing') exit(0);
+ save({ state:'checking', checked:now() });
+ let chosen=null;
+ const channels=channel == 'candidate' ? ['release','candidate'] : ['release'];
+ for (let feed in channels) {
+  const url=prefix+'update-index/nekyron-update-'+identity.flavor+'-'+feed+'.json';
+  if (!fetch(url,dir+'candidate.json',16384) || !fetch(url+'.sig',dir+'candidate.json.sig',1024)) continue;
+  if (!verified(dir+'candidate.json')) fail('signature');
+  const m=load(dir+'candidate.json');
+  if (!compatible(m) || m.channel != feed || (chosen && chosen.build_id >= m.build_id)) continue;
+  chosen=m;
+  writefile(dir+'manifest.json',readfile(dir+'candidate.json'));
+  writefile(dir+'manifest.json.sig',readfile(dir+'candidate.json.sig'));
+ }
+ unlink(dir+'candidate.json'); unlink(dir+'candidate.json.sig');
+ if (!chosen && transport_error) fail('network');
+ save({ state:chosen ? 'available' : 'current', latest:chosen, checked:now() });
+ exit(0);
+}
+const path=dir+'manifest.json';
+if (!verified(path)) fail('signature');
+const manifest=load(path);
+if (!compatible(manifest)) fail('incompatible');
+if ((ARGV[1] ?? '') != manifest.sha256) fail('stale');
+const image=dir+'firmware.bin';
+if (command == 'stage') {
+ save({ state:'staging', latest:manifest, checked:now() });
+ unlink(image);
+ const mem=readfile('/proc/meminfo') ?? '';
+ const available=match(mem,/MemAvailable:\s+(\d+) kB/);
+ if (!available || +available[1]*1024 < manifest.size+6291456) fail('memory');
+ if (!fetch(manifest.url,image,12582911)) { unlink(image); fail('download'); }
+ if (digest(image) != manifest.sha256) { unlink(image); fail('checksum'); }
+ const valid=run(['/sbin/sysupgrade','--test',image]);
+ if (valid.code != 0) { unlink(image); fail('validation'); }
+ save({ state:'ready', latest:manifest, checked:now() });
+ exit(0);
+}
+if (command == 'install') {
+ // Never force, never erase settings, never accept a caller-supplied path/URL.
+ if (load(dir+'status.json').state != 'ready' || digest(image) != manifest.sha256) fail('stale');
+ if (run(['/sbin/sysupgrade','--test',image]).code != 0) fail('validation');
+ save({ state:'installing', latest:manifest, checked:now() });
+ run(['/bin/sleep','3']);
+ if (run(['/sbin/sysupgrade',image]).code != 0) fail('install');
+ exit(0);
+}
+fail('command');

@@ -1,0 +1,159 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "A new Nekyron firmware is available:"
+msgstr "Hay un nuevo firmware Nekyron:"
+
+msgid "Actions"
+msgstr "Acciones"
+
+msgid "Automatic candidates can contain upstream security fixes and functional changes. Successful compilation is not hardware validation. Installation always requires confirmation."
+msgstr "Los candidatos automáticos pueden incluir correcciones de seguridad y cambios funcionales. Compilar correctamente no equivale a validar el hardware. La instalación siempre requiere confirmación."
+
+msgid "Available version"
+msgstr "Versión disponible"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Channel"
+msgstr "Canal"
+
+msgid "Check now"
+msgstr "Comprobar ahora"
+
+msgid "Checking for updates…"
+msgstr "Buscando actualizaciones…"
+
+msgid "Details"
+msgstr "Detalles"
+
+msgid "Download and verify update"
+msgstr "Descargar y verificar actualización"
+
+msgid "Download configuration backup"
+msgstr "Descargar copia de la configuración"
+
+msgid "Downloading and verifying…"
+msgstr "Descargando y verificando…"
+
+msgid "Experimental candidate — not hardware validated"
+msgstr "Candidato experimental — sin validar en hardware"
+
+msgid "Firmware download failed."
+msgstr "Error al descargar el firmware."
+
+msgid "Include automatic experimental candidates"
+msgstr "Incluir candidatos experimentales automáticos"
+
+msgid "Install and restart"
+msgstr "Instalar y reiniciar"
+
+msgid "Install firmware update"
+msgstr "Instalar actualización del firmware"
+
+msgid "Install update"
+msgstr "Instalar actualización"
+
+msgid "Installed version"
+msgstr "Versión instalada"
+
+msgid "Installing and restarting…"
+msgstr "Instalando y reiniciando…"
+
+msgid "Last check"
+msgstr "Última comprobación"
+
+msgid "Nekyron firmware updates"
+msgstr "Actualizaciones del firmware Nekyron"
+
+msgid "No newer compatible signed firmware"
+msgstr "No hay firmware firmado compatible más reciente"
+
+msgid "Not checked yet"
+msgstr "Todavía no comprobado"
+
+msgid "Not enough available RAM to download this image safely."
+msgstr "RAM disponible insuficiente para descargar esta imagen con seguridad."
+
+msgid "OpenWrt rejected the image. Installation is blocked."
+msgstr "OpenWrt ha rechazado la imagen. La instalación está bloqueada."
+
+msgid "Profile"
+msgstr "Perfil"
+
+msgid "Published versions"
+msgstr "Versiones publicadas"
+
+msgid "Read release notes"
+msgstr "Leer notas de versión"
+
+msgid "Release notes"
+msgstr "Notas de versión"
+
+msgid "Status"
+msgstr "Estado"
+
+msgid "The downloaded image checksum does not match."
+msgstr "La suma de verificación de la imagen descargada no coincide."
+
+msgid "The installed firmware profile cannot be identified safely."
+msgstr "No se puede identificar con seguridad el perfil del firmware instalado."
+
+msgid "The selected image changed. Check for updates again."
+msgstr "La imagen seleccionada ha cambiado. Vuelve a buscar actualizaciones."
+
+msgid "The switch will restart and network connections will be interrupted. Settings and passwords are retained. Keep the power connected throughout the update."
+msgstr "El switch se reiniciará e interrumpirá las conexiones de red. Se conservarán ajustes y contraseñas. No desconectes la alimentación durante la actualización."
+
+msgid "The update could not be checked."
+msgstr "No se pudo comprobar la actualización."
+
+msgid "The update server is unreachable. Try again later."
+msgstr "El servidor de actualizaciones no está disponible. Inténtalo más tarde."
+
+msgid "The update signature is invalid."
+msgstr "La firma de la actualización no es válida."
+
+msgid "This image does not match this switch and firmware profile."
+msgstr "Esta imagen no corresponde al switch y al perfil instalado."
+
+msgid "This is an experimental candidate that has not been validated on hardware."
+msgstr "Este candidato experimental no ha sido validado en hardware."
+
+msgid "Unable to start firmware installation."
+msgstr "No se pudo iniciar la instalación del firmware."
+
+msgid "Unable to start this operation."
+msgstr "No se pudo iniciar esta operación."
+
+msgid "Unknown"
+msgstr "Desconocido"
+
+msgid "Update available"
+msgstr "Actualización disponible"
+
+msgid "Update channel"
+msgstr "Canal de actualización"
+
+msgid "Update checking is disabled."
+msgstr "La búsqueda de actualizaciones está desactivada."
+
+msgid "Update unavailable"
+msgstr "Actualización no disponible"
+
+msgid "Updates are checked when you sign in. Nothing is installed automatically. Only signed images for this exact board and profile are accepted."
+msgstr "Se buscan actualizaciones al iniciar sesión. Nada se instala automáticamente. Solo se aceptan imágenes firmadas para este modelo y perfil exactos."
+
+msgid "Verified image ready to install"
+msgstr "Imagen verificada lista para instalar"
+
+msgid "View and update"
+msgstr "Ver y actualizar"
+
+msgid "Wait for the switch to restart. Do not disconnect the power."
+msgstr "Espera al reinicio del switch. No desconectes la alimentación."
+
+msgid "Extra packages may need reinstalling. HTTPS will regenerate after NTP synchronization; your browser may ask you to trust the new certificate."
+msgstr "Puede ser necesario reinstalar paquetes adicionales. HTTPS se regenerará tras sincronizar NTP; el navegador puede pedir confiar en el nuevo certificado."

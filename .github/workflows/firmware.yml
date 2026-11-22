@@ -17,6 +17,11 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     timeout-minutes: 240
+    outputs:
+      built: ${{ steps.plan.outputs.build }}
+      rolling: ${{ env.ROLLING }}
+      fingerprint: ${{ steps.upstream.outputs.fingerprint }}
+      cache_hit: ${{ steps.cache.outputs.cache-hit }}
     env:
       ROLLING: ${{ github.event_name == 'schedule' || inputs.rolling }}
     steps:
@@ -79,15 +84,70 @@ jobs:
         run: |
           mkdir .upstream-build-marker
           cp upstream-lock.json build/resolved-sources.json .upstream-build-marker/
-      - name: Cache successful source fingerprint
-        if: steps.plan.outputs.build == 'true' && env.ROLLING == 'true' && steps.cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
-        with:
-          path: .upstream-build-marker
-          key: sodola-upstream-success-v1-${{ steps.upstream.outputs.fingerprint }}
       - name: Validation boundary
         if: steps.plan.outputs.build == 'true'
         run: |
           echo '## Built, not hardware validated' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Hourly source checks, not an instant security advisory feed. Upstream refresh may include security fixes and functional changes. No CVE-completeness guarantee. No automatic flash or stable release publication.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Hourly source checks, not an instant security advisory feed. Upstream refresh may include security fixes and functional changes. No CVE-completeness guarantee. No automatic flash or stable release promotion; signed experimental candidates may be published by the isolated signing job.' >> "$GITHUB_STEP_SUMMARY"
           echo 'If patches no longer apply, the build fails rather than silently dropping them.' >> "$GITHUB_STEP_SUMMARY"
+
+  publish-candidate:
+    needs: build
+    if: needs.build.outputs.built == 'true' && needs.build.outputs.rolling == 'true'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Check signing availability
+        id: signing
+        env:
+          UPDATE_SIGNING_KEY: ${{ secrets.NEKYRON_UPDATE_SIGNING_KEY }}
+        run: |
+          if [ -n "$UPDATE_SIGNING_KEY" ]; then
+            echo 'ready=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'No signing key: unsigned candidates are not offered to devices.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        if: steps.signing.outputs.ready == 'true'
+        with:
+          name: sodola-candidate-NOT-HARDWARE-TESTED-${{ github.run_number }}
+          path: artifacts
+      - name: Build pinned OpenWrt signature tool
+        if: steps.signing.outputs.ready == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake squashfs-tools
+          scripts/build-usign.sh "$RUNNER_TEMP/usign"
+      - name: Sign and publish experimental update
+        if: steps.signing.outputs.ready == 'true'
+        env:
+          UPDATE_SIGNING_KEY: ${{ secrets.NEKYRON_UPDATE_SIGNING_KEY }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PYCODE'
+          import os,pathlib,subprocess
+          key=pathlib.Path(os.environ['RUNNER_TEMP'])/'nekyron-update.sec'
+          key.write_text(os.environ.pop('UPDATE_SIGNING_KEY'))
+          key.chmod(0o600)
+          try:
+              subprocess.run(['python3','scripts/publish-update.py','artifacts','--key',str(key),'--usign',os.environ['RUNNER_TEMP']+'/usign/out/usign'],check=True)
+          finally:
+              key.unlink(missing_ok=True)
+          PYCODE
+      - name: Record successfully published source fingerprint
+        if: steps.signing.outputs.ready == 'true' && needs.build.outputs.cache_hit != 'true'
+        env:
+          FINGERPRINT: ${{ needs.build.outputs.fingerprint }}
+        run: |
+          mkdir .upstream-build-marker
+          printf '%s\n' "$FINGERPRINT" > .upstream-build-marker/fingerprint
+      - name: Cache successfully published sources
+        if: steps.signing.outputs.ready == 'true' && needs.build.outputs.cache_hit != 'true'
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: .upstream-build-marker
+          key: sodola-upstream-success-v1-${{ needs.build.outputs.fingerprint }}

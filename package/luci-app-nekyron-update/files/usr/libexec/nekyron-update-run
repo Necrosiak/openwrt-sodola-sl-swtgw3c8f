@@ -1,0 +1,21 @@
+#!/bin/sh
+set -eu
+umask 077
+mkdir -p /var/run/nekyron-update
+chmod 700 /var/run/nekyron-update
+# Serialize discovery, downloads and installation. A crashed worker is recovered.
+if ! mkdir /var/run/nekyron-update/lock 2>/dev/null; then
+ if [ -r /var/run/nekyron-update/lock/pid ]; then
+  read -r oldpid < /var/run/nekyron-update/lock/pid
+  case "$oldpid" in ''|*[!0-9]*) exit 1;; esac
+  kill -0 "$oldpid" 2>/dev/null && exit 0
+  rm -f /var/run/nekyron-update/lock/pid
+  rmdir /var/run/nekyron-update/lock 2>/dev/null || exit 1
+  mkdir /var/run/nekyron-update/lock || exit 1
+ else
+  exit 0
+ fi
+fi
+printf '%s\n' "$$" > /var/run/nekyron-update/lock/pid
+trap 'rm -f /var/run/nekyron-update/lock/pid; rmdir /var/run/nekyron-update/lock 2>/dev/null || true' EXIT HUP INT TERM
+/usr/bin/ucode /usr/libexec/nekyron-update-worker "$@"

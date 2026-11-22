@@ -27,3 +27,5 @@ GitHub Actions controlla le fonti ogni ora e genera candidati non testati quando
 Home Assistant: sono disponibili istruzioni e una ACL opzionale di sola lettura. La gestione completa di porte/VLAN non è stata convalidata e può richiedere azioni personalizzate.
 
 [Certificati HTTPS](docs/HTTPS.md)
+
+[Aggiornamenti firmati](docs/UPDATES.md)

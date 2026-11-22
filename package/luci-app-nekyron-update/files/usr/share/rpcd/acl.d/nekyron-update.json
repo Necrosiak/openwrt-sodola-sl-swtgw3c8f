@@ -1,0 +1,23 @@
+{
+  "nekyron-update": {
+    "description": "Read signed firmware availability and install only validated matching images",
+    "read": {
+      "ubus": {
+        "nekyron_update": [
+          "status",
+          "check"
+        ]
+      }
+    },
+    "write": {
+      "ubus": {
+        "nekyron_update": [
+          "action"
+        ]
+      },
+      "cgi-io": [
+        "backup"
+      ]
+    }
+  }
+}

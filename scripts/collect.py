@@ -12,6 +12,7 @@ for suffix in ('initramfs-kernel.bin','squashfs-sysupgrade.bin'):
  if suffix.startswith('squashfs'):assert len(d)<0xc00000 and h[4]+len(raw)<0x81000000
  else:assert 0x84000000+len(d)<0x88000000
  shutil.copyfile(p,out/p.name);report['images'][p.name]={'bytes':len(d),'sha256':hashlib.sha256(d).hexdigest(),'header_crc_ok':True,'payload_crc_ok':True}
+if (b/'files/etc/nekyron-release.json').exists():shutil.copyfile(b/'files/etc/nekyron-release.json',out/'nekyron-release.json')
 for name in ('config.buildinfo','feeds.buildinfo','version.buildinfo'):
  if (images/name).exists():shutil.copyfile(images/name,out/name)
 for p in images.glob('*sodola*.manifest'):shutil.copyfile(p,out/p.name)

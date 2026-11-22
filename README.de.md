@@ -27,3 +27,5 @@ GitHub Actions prüft die Quellen stündlich und baut bei Änderungen ungetestet
 Home Assistant: Integrationshinweise und ein optionales Nur-Lese-ACL sind vorbereitet. Die vollständige Steuerung von Ports/VLANs ist nicht getestet und kann eigene Aktionen erfordern.
 
 [HTTPS-Zertifikate](docs/HTTPS.md)
+
+[Signierte Firmware-Aktualisierungen](docs/UPDATES.md)

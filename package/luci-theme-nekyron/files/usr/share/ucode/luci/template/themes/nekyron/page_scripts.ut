@@ -7,6 +7,7 @@
 <script type="text/javascript">L.require('menu-argon')</script>
 <script type="text/javascript">
 	L.require('argon-compat');
+	L.require('nekyron-update-notify').catch(function() {});
 	L.require('argon-appearance');
 	if ([ 'admin-status', 'admin-status-overview' ].includes(document.body.dataset.page))
 		L.require('argon-overview');

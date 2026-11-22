@@ -47,3 +47,5 @@ python3 scripts/collect.py build artifacts
 OpenWrt et ses composants conservent leurs licences respectives. Le profil de carte et les correctifs noyau suivent GPL-2.0-or-later ; les templates Argon et adaptations du thème sont sous Apache-2.0, avec les attributions amont conservées. Adblock-fast suit AGPL-3.0-or-later. Voir [licences et sources](docs/LICENSES.md).
 
 [Certificats HTTPS](docs/HTTPS.md)
+
+[Mises à jour signées](docs/UPDATES.md)

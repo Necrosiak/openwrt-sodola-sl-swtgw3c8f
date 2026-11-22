@@ -6,12 +6,12 @@ Le workflow GitHub Actions vérifie les sources chaque heure (minute 17 UTC) et 
 
 - Pas de connexion à votre switch depuis GitHub.
 - Pas de mot de passe, clé SSH ou adresse de réseau privé dans les secrets du workflow.
-- Aucun flash automatique, aucune promotion automatique d'un candidat en release validée.
+- Aucun flash automatique, aucune promotion automatique d'un candidat en version validée. Après compilation et contrôles, un job isolé signe et publie les candidats expérimentaux ; l'utilisateur doit activer ce canal et confirmer l'installation depuis LuCI.
 - Si les patches ne s'appliquent plus ou si la compilation/les contrôles échouent, aucun candidat réussi n'est produit. Consulter l'onglet Actions et configurer ses notifications GitHub selon ses préférences.
 - Un rafraîchissement amont peut inclure des correctifs de sécurité et des changements fonctionnels. Ce workflow n'est pas un scanner CVE et ne garantit pas la correction de toutes les vulnérabilités.
 - Les artefacts sont conservés 14 jours. GitHub peut suspendre les workflows planifiés d'un dépôt public sans activité pendant une longue période.
 
-Après un essai en RAM et une validation matérielle, le mainteneur peut promouvoir une image, puis l'utilisateur applique la mise à jour depuis LuCI. La procédure de validation doit inclure les liens et le trafic réels, pas uniquement une compilation réussie.
+Les versions publiées et les candidats disposent de flux signés distincts (voir [UPDATES](UPDATES.md)). Après un essai en RAM et une validation matérielle, le mainteneur peut promouvoir une image ; l'utilisateur confirme ensuite la mise à jour depuis LuCI. La procédure de validation doit inclure les liens et le trafic réels, pas uniquement une compilation réussie.
 
 Ne pas utiliser une mise à jour globale `apk upgrade --prune` ou un firmware générique proposé par une intégration HA sur ce profil expérimental. Le noyau, les modules, la description de carte et nos correctifs doivent rester cohérents. Le service officiel ASU ne fournit pas automatiquement ce profil local. Les mises à jour ponctuelles de paquets demandent une vérification de compatibilité et d'espace libre.
 

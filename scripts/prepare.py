@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Prepare pinned public sources, or an explicitly requested upstream candidate."""
-import argparse,json,os,re,shutil,subprocess
+import argparse,json,os,re,shutil,subprocess,time,datetime
 from pathlib import Path
 root=Path(__file__).resolve().parents[1]
 p=argparse.ArgumentParser();p.add_argument('destination',type=Path);p.add_argument('--rolling',action='store_true');p.add_argument('--upstream-lock',type=Path);a=p.parse_args();dst=a.destination.resolve()
@@ -33,7 +33,12 @@ if fw.is_symlink():fw.unlink()
 clone('https://github.com/jerrykuku/luci-theme-argon.git',dst/'package/luci-theme-argon',lock['argon'])
 shutil.copytree(root/'package/luci-theme-nekyron',dst/'package/luci-theme-nekyron',symlinks=True)
 shutil.copytree(root/'package/luci-app-nekyron-https',dst/'package/luci-app-nekyron-https',symlinks=True)
+shutil.copytree(root/'package/luci-app-nekyron-update',dst/'package/luci-app-nekyron-update',symlinks=True)
 shutil.copytree(root/'config/files',dst/'files',symlinks=True)
+epoch=int(os.environ.get('NEKYRON_BUILD_EPOCH',str(int(time.time()))))
+recipe=subprocess.check_output(['git','rev-parse','--short=12','HEAD'],cwd=root,text=True).strip()
+identity={'schema':1,'board':'sodola,sl-swtgw3c8f','flavor':'full','contract':1,'build_id':epoch,'version':datetime.datetime.fromtimestamp(epoch,datetime.timezone.utc).strftime('%Y.%m.%d-%H%M')+'-'+recipe}
+(dst/'files/etc/nekyron-release.json').write_text(json.dumps(identity,indent=2)+'\n')
 shutil.copyfile(root/'config/config.seed',dst/'.config')
 run('make','defconfig',cwd=dst)
 actual={n:subprocess.check_output(['git','rev-parse','HEAD'],cwd=(dst if n=='.' else dst/'feeds'/n),text=True).strip() for n in ('.',*urls)}
