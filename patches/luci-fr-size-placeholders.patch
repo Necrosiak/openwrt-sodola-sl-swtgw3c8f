@@ -1,0 +1,11 @@
+--- a/applications/luci-app-package-manager/po/fr/package-manager.po
++++ b/applications/luci-app-package-manager/po/fr/package-manager.po
+@@ -22,7 +22,7 @@
+ 
+ #: applications/luci-app-package-manager/htdocs/luci-static/resources/view/package-manager.js:1205
+ msgid "%s used (%1024mB used of %1024mB, %1024mB free)"
+-msgstr "%s utilisé (%1024 Mo utilisés sur %1024 Mo, %1024 Mo libres)"
++msgstr "%s utilisé (%1024mB utilisés sur %1024mB, %1024mB libres)"
+ 
+ #: applications/luci-app-package-manager/htdocs/luci-static/resources/view/package-manager.js:1245
+ msgid ""

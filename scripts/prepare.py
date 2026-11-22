@@ -16,6 +16,8 @@ run('git','apply',str(root/'patches/sodola.patch'),cwd=dst)
 urls={'packages':'https://github.com/openwrt/packages.git','luci':'https://github.com/openwrt/luci.git','routing':'https://github.com/openwrt/routing.git'}
 for name,url in urls.items():clone(url,dst/'feeds'/name,'HEAD' if a.rolling else lock[name])
 shutil.copyfile(root/'patches/wget-no-host-paths.patch',dst/'feeds/packages/net/wget/patches/910-no-host-build-paths.patch')
+run('git','apply','--check',str(root/'patches/luci-fr-size-placeholders.patch'),cwd=dst/'feeds/luci')
+run('git','apply',str(root/'patches/luci-fr-size-placeholders.patch'),cwd=dst/'feeds/luci')
 (dst/'feeds.conf').write_text(''.join(f'src-git {n} {u}\n' for n,u in urls.items()))
 run('./scripts/feeds','update','-i','packages','luci','routing',cwd=dst)
 run('./scripts/feeds','install','-a','-p','luci',cwd=dst)
